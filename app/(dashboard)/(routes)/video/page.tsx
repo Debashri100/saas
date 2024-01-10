@@ -14,10 +14,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { useProModel } from "@/hooks/use-pro-model";
 
 
 
 const VideoPage = () => {
+    const proModel = useProModel();
     const router = useRouter();
     const [video, setVideo] = useState<string>();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -37,9 +39,9 @@ const VideoPage = () => {
 
             form.reset();
         }catch(error:any){
-            // TODO: Open pro model
-            console.log(error);
-        }finally{
+            if(error?.response?.status === 403) {
+                proModel.onOpen();}
+        } finally {
             router.refresh();
         }
     };

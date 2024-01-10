@@ -26,11 +26,13 @@ import {
     amountOption, 
     formSchema, 
     resolutionOptions } from "./constants";
+import { useProModel } from "@/hooks/use-pro-model";
 
 
 
 
 const ImagePage = () => {
+    const proModel = useProModel();
     const router = useRouter();
     const [images, setImages] = useState<string[]>([]);
 
@@ -56,8 +58,9 @@ const ImagePage = () => {
             setImages(urls);
             form.reset();
         }catch(error:any){
-            // TODO: Open pro model
-            console.log(error);
+            if(error?.response?.status === 403) {
+                proModel.onOpen();
+           }
         }finally{
             router.refresh();
         }

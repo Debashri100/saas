@@ -18,10 +18,12 @@ import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
 import { BotAvatar } from "@/components/bot-avatar";
 import { UserAvatar } from "@/components/user-avatar";
+import { useProModel } from "@/hooks/use-pro-model";
 //import { ChatCompletionResquestMessage } from "openai";
 
 
 const ConversationPage = () => {
+    const proModel = useProModel();
     const router = useRouter();
     const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
     const form = useForm<z.infer<typeof formSchema>>({
@@ -49,8 +51,9 @@ const ConversationPage = () => {
 
             form.reset();
         }catch(error:any){
-            // TODO: Open pro model
-            console.log(error);
+           if(error?.response?.status === 403) {
+                proModel.onOpen();
+           }
         }finally{
             router.refresh();
         }
